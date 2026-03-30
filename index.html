@@ -817,19 +817,21 @@ document.addEventListener('DOMContentLoaded', injectOwls);
    hint = show dashed rings on empty cells
 ══════════════════════════════════════════ */
 function renderNumicon(filledA, filledUpTo, hint=false){
-  // Layout: 5 circles per row, 2 rows
-  // SVG canvas: 620 wide, 260 tall
+  // 5 columns × 2 rows grid — but fills COLUMN BY COLUMN (numicon style)
+  // i=0→top-left, i=1→bottom-left, i=2→top-col2, i=3→bottom-col2 ... i=8→top-col5, i=9→bottom-col5
+  // So number 2 = top-left + bottom-left. Number 5 = all of col1,col2 + top of col3. Etc.
   const W=620, H=260;
-  const pad=18;       // padding inside border rect
-  const gap=12;       // gap between circles
+  const pad=18;
   const cols=5, rows=2;
+  const gap=12;
   const cellW=(W - pad*2 - gap*(cols-1)) / cols;
   const cellH=(H - pad*2 - gap*(rows-1)) / rows;
-  const r=Math.min(cellW,cellH)/2 - 4; // circle radius
+  const r=Math.min(cellW,cellH)/2 - 4;
 
   let circles='';
   for(let i=0;i<10;i++){
-    const col=i%5, row=Math.floor(i/5);
+    const col=Math.floor(i/2);  // column 0-4, advances every 2 dots
+    const row=i%2;              // 0=top, 1=bottom
     const cx = pad + col*(cellW+gap) + cellW/2;
     const cy = pad + row*(cellH+gap) + cellH/2;
     const isA  = i < filledA;
